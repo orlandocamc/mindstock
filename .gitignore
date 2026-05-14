@@ -1,0 +1,14 @@
+﻿# Python
+mindstock-vision/venv/
+mindstock-vision/__pycache__/
+mindstock-vision/*.pyc
+
+# Node
+mindstock-frontend/node_modules/
+
+# Java / Gradle
+mindstock/.gradle/
+mindstock/build/
+
+# VS Code
+.vscode/
