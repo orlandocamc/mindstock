@@ -322,6 +322,8 @@ export default function App() {
     return <AuthScreen onAuthSuccess={setCurrentUser} />;
   }
 
+  const isLab = currentUser.rol === "LABORATORISTA" || currentUser.rol === "ADMIN";
+
   async function checkVision() {
     try { await visionAPI.getStatus(); setVisionOnline(true); } catch { setVisionOnline(false); }
   }
@@ -346,7 +348,7 @@ export default function App() {
 
   async function handleApprove(requestId) {
     setActionLoading(requestId);
-    try { await loansAPI.approveRequest(requestId, 1); showNotification("Solicitud aprobada correctamente"); loadData(); } catch (err) { showNotification(err.message, "error"); } finally { setActionLoading(null); }
+    try { await loansAPI.approveRequest(requestId, currentUser.id); showNotification("Solicitud aprobada correctamente"); loadData(); } catch (err) { showNotification(err.message, "error"); } finally { setActionLoading(null); }
   }
   async function handleReject(requestId) {
     setActionLoading(requestId);
@@ -374,7 +376,7 @@ export default function App() {
           <div className="nav-tabs">
             {[
               { key: "inventory", label: "Inventario", icon: Package },
-              { key: "requests", label: "Solicitudes", icon: Bell, count: pendingRequests.length },
+              ...(isLab ? [{ key: "requests", label: "Solicitudes", icon: Bell, count: pendingRequests.length }] : []),
               { key: "loans", label: "Préstamos", icon: Clock, count: activeLoans.length },
             ].map((tab) => (
               <button key={tab.key} className={`nav-tab ${activeTab === tab.key ? "active" : ""}`} onClick={() => setActiveTab(tab.key)}>
@@ -393,7 +395,7 @@ export default function App() {
                 <LogOut size={14} />
               </button>
             </div>
-            <button className="btn-manual" onClick={() => setShowManual(true)}><Plus size={16} /> Manual</button>
+            {isLab && <button className="btn-manual" onClick={() => setShowManual(true)}><Plus size={16} /> Manual</button>}
           </div>
         </div>
       </nav>
